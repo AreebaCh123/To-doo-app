@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Optional Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <a class="navbar-brand fw-bold" href="#">My To-Do App</a>
+        <div class="ms-auto">
+            <button class="btn btn-outline-light me-2" id="nav-add">Add Task</button>
+            <button class="btn btn-outline-light me-2" id="nav-all">All Tasks</button>
+            <button class="btn btn-outline-light" id="nav-delete">Delete Task</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container my-5">
+
+        <!-- Add Task Section -->
+        <div id="add-task-section" style="display:none;">
+            <h3 class="mb-4">Add a New Task</h3>
+            <form id="task-form">
+                <div class="mb-3">
+                    <label for="task-name" class="form-label">Task Name</label>
+                    <input type="text" class="form-control" id="task-name" placeholder="Enter task name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="task-desc" class="form-label">Description</label>
+                    <textarea class="form-control" id="task-desc" rows="3" placeholder="Enter task description" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="task-time" class="form-label">Time Needed</label>
+                    <input type="time" class="form-control" id="task-time" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+        </div>
+
+        <!-- All Tasks Section -->
+        <div id="all-tasks-section" style="display:none;">
+            <h3 class="mb-4">All Tasks</h3>
+
+            <!-- Filter Buttons -->
+            <div class="mb-3">
+                <button class="btn btn-outline-primary me-2" id="filter-all">All</button>
+                <button class="btn btn-outline-success me-2" id="filter-completed">Completed</button>
+                <button class="btn btn-outline-warning" id="filter-pending">Pending</button>
+            </div>
+
+            <!-- Task List Table -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Description</th>
+                        <th>Time Needed</th>
+                        <th>Status</th>
+                        <th>Mark Completed</th>
+                    </tr>
+                </thead>
+                <tbody id="task-list">
+                    <!-- Tasks will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Delete Task Section -->
+        <div id="delete-task-section" style="display:none;">
+            <h3 class="mb-4">Delete Tasks</h3>
+
+            <!-- Delete Task Table -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Description</th>
+                        <th>Time Needed</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="delete-task-list">
+                    <!-- Tasks for deletion will appear here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+<!-- Bootstrap Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast align-items-center text-white bg-dark border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="toast-body">
+                Hello!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (optional if you want to use) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
