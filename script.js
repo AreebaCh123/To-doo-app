@@ -1,122 +1,246 @@
-$(document).ready(function () {
+$(document).ready(function(){
 
-    // Array to store tasks
-    let tasks = [];
+// GET TASKS
+function getTasks(){
+return JSON.parse(localStorage.getItem("tasks")) || [];
+}
 
-    // Function to show toast notifications
-    function showToast(message) {
-        const toastEl = $('#liveToast');
-        $('#toast-body').text(message);
-        const toast = new bootstrap.Toast(toastEl[0]);
-        toast.show();
-    }
+// SAVE TASKS
+function saveTasks(tasks){
+localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-    // Function to show only one section
-    function showSection(sectionId) {
-        $('#add-task-section').hide();
-        $('#all-tasks-section').hide();
-        $('#delete-task-section').hide();
-        $(sectionId).show();
-    }
+// TOAST
+function showToast(msg){
+$("#toast-body").text(msg);
+new bootstrap.Toast($("#liveToast")[0]).show();
+}
 
-    // Navbar button click events
-    $('#nav-add').click(() => showSection('#add-task-section'));
-    $('#nav-all').click(() => showSection('#all-tasks-section'));
-    $('#nav-delete').click(() => showSection('#delete-task-section'));
+// SHOW SECTIONS
+function showSection(id){
 
-    // Add task form submit
-    $('#task-form').submit(function (e) {
-        e.preventDefault();
+$("#add-task-section").hide();
+$("#all-tasks-section").hide();
+$("#edit-section").hide();
 
-        // Get form values
-        const name = $('#task-name').val();
-        const desc = $('#task-desc').val();
-        const time = $('#task-time').val();
+$(id).show();
 
-        // Create task object
-        const task = {
-            id: Date.now(), // unique id
-            name,
-            desc,
-            time,
-            status: 'Pending'
-        };
+}
 
-        // Add task to array
-        tasks.push(task);
+// NAVBAR
+$("#nav-add").click(()=>showSection("#add-task-section"));
 
-        // Clear form
-        $(this)[0].reset();
+$("#nav-all").click(()=>{
+showSection("#all-tasks-section");
+updateTable();
+});
 
-        // Update tables
-        updateTaskTables();
 
-        showToast('Task added successfully 🎉');
-    });
 
-    // Function to update task tables
-    function updateTaskTables(filter = 'All') {
-        // Clear tables
-        $('#task-list').empty();
-        $('#delete-task-list').empty();
+// ADD TASK
+$("#task-form").submit(function(e){
 
-        tasks.forEach(task => {
-            // Apply filter for All Tasks section
-            if (filter === 'All' || task.status === filter) {
-                $('#task-list').append(`
-                    <tr>
-                        <td>${task.name}</td>
-                        <td>${task.desc}</td>
-                        <td>${task.time}</td>
-                        <td>${task.status}</td>
-                        <td>
-                            ${task.status === 'Pending' 
-                                ? `<button class="btn btn-success btn-sm mark-complete" data-id="${task.id}">Mark Completed</button>` 
-                                : `<button class="btn btn-secondary btn-sm" disabled>Completed</button>`}
-                        </td>
-                    </tr>
-                `);
-            }
+e.preventDefault();
 
-            // Delete section table
-            $('#delete-task-list').append(`
-                <tr>
-                    <td>${task.name}</td>
-                    <td>${task.desc}</td>
-                    <td>${task.time}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm delete-task" data-id="${task.id}">Delete</button>
-                    </td>
-                </tr>
-            `);
-        });
-    }
+let tasks = getTasks();
 
-    // Mark task as completed
-    $(document).on('click', '.mark-complete', function () {
-        const id = $(this).data('id');
-        tasks = tasks.map(task => task.id === id ? {...task, status: 'Completed'} : task);
-        updateTaskTables($('#filter-all.active')?.data('filter') || 'All');
-        showToast('Task marked as completed ✅');
-    });
+let task = {
 
-    // Delete task
-    $(document).on('click', '.delete-task', function () {
-        const id = $(this).data('id');
-        tasks = tasks.filter(task => task.id !== id);
-        updateTaskTables($('#filter-all.active')?.data('filter') || 'All');
-        showToast('Task deleted 🗑️');
-    });
+id: Date.now(),
 
-    // Filter buttons
-    $('#filter-all').click(function () {
-        updateTaskTables('All');
-    });
-    $('#filter-completed').click(function () {
-        updateTaskTables('Completed');
-    });
-    $('#filter-pending').click(function () {
-        updateTaskTables('Pending');
-    });
+name: $("#task-name").val(),
+
+desc: $("#task-desc").val(),
+
+time: $("#task-time").val(),
+
+status: "Pending"
+
+};
+
+tasks.push(task);
+
+saveTasks(tasks);
+
+this.reset();
+
+showToast("Task Added Successfully");
+
+updateTable();
+
+});
+
+
+
+// UPDATE TABLE
+function updateTable(filter="All"){
+
+let tasks = getTasks();
+
+$("#task-list").empty();
+
+tasks.forEach(task=>{
+
+if(filter==="All" || task.status===filter){
+
+$("#task-list").append(`
+
+<tr>
+
+<td>${task.name}</td>
+
+<td>${task.desc}</td>
+
+<td>${task.time}</td>
+
+<td>${task.status}</td>
+
+<td>
+
+<button class="btn btn-sm btn-primary edit" data-id="${task.id}">
+<i class="bi bi-pencil"></i>
+</button>
+
+<button class="btn btn-sm btn-success complete" data-id="${task.id}">
+<i class="bi bi-check"></i>
+</button>
+
+<button class="btn btn-sm btn-danger delete" data-id="${task.id}">
+<i class="bi bi-trash"></i>
+</button>
+
+</td>
+
+</tr>
+
+`);
+
+}
+
+});
+
+}
+
+
+
+// DELETE TASK
+$(document).on("click",".delete",function(){
+
+let id=$(this).data("id");
+
+let tasks=getTasks();
+
+tasks=tasks.filter(t=>t.id!=id);
+
+saveTasks(tasks);
+
+updateTable();
+
+showToast("Task Deleted");
+
+});
+
+
+
+// COMPLETE TASK
+$(document).on("click",".complete",function(){
+
+let id=$(this).data("id");
+
+let tasks=getTasks();
+
+tasks=tasks.map(t=>{
+
+if(t.id==id){
+t.status="Completed";
+}
+
+return t;
+
+});
+
+saveTasks(tasks);
+
+updateTable();
+
+showToast("Task Completed");
+
+});
+
+
+
+// EDIT BUTTON
+$(document).on("click",".edit",function(){
+
+let id=$(this).data("id");
+
+let tasks=getTasks();
+
+let task=tasks.find(t=>t.id==id);
+
+$("#edit-id").val(task.id);
+
+$("#edit-name").val(task.name);
+
+$("#edit-desc").val(task.desc);
+
+$("#edit-time").val(task.time);
+
+showSection("#edit-section");
+
+});
+
+
+
+// SAVE EDIT
+$("#edit-form").submit(function(e){
+
+e.preventDefault();
+
+let id=$("#edit-id").val();
+
+let tasks=getTasks();
+
+tasks=tasks.map(t=>{
+
+if(t.id==id){
+
+t.name=$("#edit-name").val();
+
+t.desc=$("#edit-desc").val();
+
+t.time=$("#edit-time").val();
+
+}
+
+return t;
+
+});
+
+saveTasks(tasks);
+
+showToast("Task Updated");
+
+showSection("#all-tasks-section");
+
+updateTable();
+
+});
+
+
+
+// FILTERS
+$("#filter-all").click(()=>updateTable("All"));
+
+$("#filter-completed").click(()=>updateTable("Completed"));
+
+$("#filter-pending").click(()=>updateTable("Pending"));
+
+
+
+// LOAD TASKS ON PAGE LOAD
+updateTable();
+
+showSection("#all-tasks-section");
 
 });
